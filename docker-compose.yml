@@ -1,0 +1,50 @@
+version: '3.9'
+name: fintelligence 
+
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: finuser
+      POSTGRES_PASSWORD: finpass
+      POSTGRES_DB: fintelligence
+    ports: ["5432:5432"]
+    volumes: ["postgres_data:/var/lib/postgresql/data"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U finuser -d fintelligence"]
+      interval: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    ports: ["6379:6379"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+
+  backend:
+    build: ./backend
+    ports: ["8000:8000"]
+    env_file: ./backend/.env
+    depends_on:
+      postgres: { condition: service_healthy }
+      redis:    { condition: service_healthy }
+    volumes:
+      - ./backend:/app
+      - faiss_data:/app/faiss_index
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build: ./frontend
+    ports: ["5173:5173"]
+    env_file: ./frontend/.env.local
+    depends_on: [backend]
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
+  faiss_data:

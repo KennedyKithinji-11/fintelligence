@@ -1,0 +1,31 @@
+/* Tailwind base layers — required for ALL Tailwind classes to work */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global resets and custom properties */
+:root {
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+  color: #e2e8f0;
+  background-color: #050810;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body { overflow: hidden; } /* Dashboard is full-screen, no outer scroll */
+
+/* Scrollbar styling for dark theme */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #0a0f1e; }
+::-webkit-scrollbar-thumb { background: #2a3560; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3d4f7c; }

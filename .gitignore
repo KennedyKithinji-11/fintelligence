@@ -1,0 +1,32 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.egg-info/
+.pytest_cache/
+faiss_index/
+
+# Node
+node_modules/
+dist/
+.env.local
+.env.production
+
+# Docker
+docker-compose.broken/
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.user
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets — never commit these
+backend/.env
+frontend/.env.local

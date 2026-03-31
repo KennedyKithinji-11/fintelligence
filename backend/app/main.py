@@ -35,6 +35,6 @@ app.include_router(alerts.router)
 app.include_router(research.router)
 app.include_router(admin.router)
 
-@app.get("/")
+@app.api_route("/", methods=["GET", "HEAD"])
 async def health():
     return {"status": "operational", "service": "FinTelligence API"}

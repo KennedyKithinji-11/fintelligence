@@ -3,7 +3,7 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     app_name: str = "FinTelligence API"
     debug: bool = False
-    allowed_origin: str = "http://localhost:5173"
+    ALLOWED_ORIGIN: str = "http://localhost:5173"
 
     DATABASE_URL: str = "postgresql://finuser:finpass@localhost:5432/fintelligence"
     REDIS_URL: str = "redis://localhost:6379"

@@ -30,7 +30,7 @@ export default function Dashboard() {
         {/* Right: AI research + alerts (role-gated) */}
         <div className="flex flex-col gap-px">
           {user?.role !== 'viewer' && <AIResearchPanel />}
-          <AlertsPanel prices={prices} />
+          <AlertsPanel />
         </div>
 
       </div>

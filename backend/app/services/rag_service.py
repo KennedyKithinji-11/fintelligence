@@ -1,25 +1,35 @@
 # app/services/rag_service.py
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_huggingface import HuggingFaceEmbeddings    # ← updated import
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
 from langchain_core.prompts import ChatPromptTemplate
 from app.config import settings
 import os
 
-_embeddings = HuggingFaceEmbeddings(model_name=settings.EMBEDDING_MODEL)
+# Lazy loaded — not initialized at import time
+_embeddings = None
 _vector_store = None
 FAISS_PATH = "./faiss_index"
+
+def get_embeddings():
+    global _embeddings
+    if _embeddings is None:
+        _embeddings = HuggingFaceEmbeddings(model_name=settings.EMBEDDING_MODEL)
+    return _embeddings
 
 def get_vector_store():
     global _vector_store
     if _vector_store is None:
         if os.path.exists(FAISS_PATH):
             _vector_store = FAISS.load_local(
-                FAISS_PATH, _embeddings, allow_dangerous_deserialization=True
+                FAISS_PATH, get_embeddings(),
+                allow_dangerous_deserialization=True
             )
         else:
-            _vector_store = FAISS.from_texts(["FinTelligence initialised."], _embeddings)
+            _vector_store = FAISS.from_texts(
+                ["FinTelligence initialised."], get_embeddings()
+            )
     return _vector_store
 
 async def ingest_document(text: str, source_name: str) -> int:

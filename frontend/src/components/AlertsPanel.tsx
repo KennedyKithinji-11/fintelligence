@@ -1,4 +1,4 @@
-export function AlertsPanel({ prices }: { prices: any }) {
+export function AlertsPanel() {
   return (
     <div>
       <h2>Alerts Panel</h2>

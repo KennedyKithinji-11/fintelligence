@@ -1,5 +1,5 @@
 // frontend/src/hooks/useMarketData.ts
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, } from 'react';
 import { useWebSocket } from './useWebSocket';
 
 export interface PriceTick {

@@ -23,14 +23,16 @@ export function AIResearchPanel() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const { data } = await client.post('/research/upload', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      // FIX: Do NOT pass Content-Type header — Axios + browser sets multipart/form-data
+      // with the correct boundary automatically. Setting it manually breaks the upload (422).
+      const { data } = await client.post('/research/upload', formData);
       setUploadStatus(`✓ ${data.source} ingested (${data.chunks} chunks)`);
     } catch (err: any) {
       setUploadStatus(`✗ Upload failed: ${err?.response?.data?.detail || 'Unknown error'}`);
     } finally {
       setUploading(false);
+      // Reset input so the same file can be re-uploaded if needed
+      if (fileRef.current) fileRef.current.value = '';
     }
   };
 

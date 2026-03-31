@@ -11,7 +11,10 @@ client.interceptors.request.use((config) => {
   if (token) config.headers.Authorization = `Bearer ${token}`;
 
   // Set Content-Type based on data type
-  if (config.data instanceof URLSearchParams) {
+  // IMPORTANT: Skip FormData — browser must set multipart/form-data with boundary automatically
+  if (config.data instanceof FormData) {
+    // Do nothing — let Axios/browser handle Content-Type + boundary
+  } else if (config.data instanceof URLSearchParams) {
     config.headers['Content-Type'] = 'application/x-www-form-urlencoded';
   } else if (config.data) {
     config.headers['Content-Type'] = 'application/json';

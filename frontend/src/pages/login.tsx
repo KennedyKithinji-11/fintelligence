@@ -2,14 +2,17 @@ import { useState, FormEvent } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
+const DEMO_EMAIL    = 'demo@fintelligence.app'
+const DEMO_PASSWORD = 'Demo1234!'
+
 export default function Login() {
   const { login, user, isLoading } = useAuth()
-  const [email, setEmail]       = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError]       = useState<string | null>(null)
+  const [email, setEmail]           = useState('')
+  const [password, setPassword]     = useState('')
+  const [error, setError]           = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
+  const [isDemoLoading, setIsDemoLoading] = useState(false)
 
-  // Already authenticated — redirect to dashboard
   if (!isLoading && user) return <Navigate to="/" replace />
 
   const handleSubmit = async (e: FormEvent) => {
@@ -18,13 +21,29 @@ export default function Login() {
     setSubmitting(true)
     try {
       await login(email, password)
-      // login() updates AuthContext, which triggers Navigate above
     } catch (err: any) {
       setError(err?.response?.data?.detail || 'Login failed. Check your credentials.')
     } finally {
       setSubmitting(false)
     }
   }
+
+  const handleDemoLogin = async () => {
+    setError(null)
+    setIsDemoLoading(true)
+    // Fill in fields visually so the user sees what's happening
+    setEmail(DEMO_EMAIL)
+    setPassword(DEMO_PASSWORD)
+    try {
+      await login(DEMO_EMAIL, DEMO_PASSWORD)
+    } catch (err: any) {
+      setError('Demo account unavailable. Please try again later.')
+    } finally {
+      setIsDemoLoading(false)
+    }
+  }
+
+  const isbusy = submitting || isDemoLoading
 
   return (
     <div className="min-h-screen bg-[#050810] flex items-center justify-center p-4">
@@ -79,12 +98,42 @@ export default function Login() {
 
             <button
               type="submit"
-              disabled={submitting}
+              disabled={isbusy}
               className="w-full bg-[#00d4ff] text-[#050810] font-bold py-2.5 rounded text-sm hover:bg-[#00b8e0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {submitting ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
+
+          {/* Divider */}
+          <div className="flex items-center gap-3 my-4">
+            <div className="flex-1 h-px bg-[#2a3560]" />
+            <span className="text-[#4a5270] text-xs">or</span>
+            <div className="flex-1 h-px bg-[#2a3560]" />
+          </div>
+
+          {/* Try Demo button */}
+          <button
+            onClick={handleDemoLogin}
+            disabled={isbusy}
+            className="w-full bg-transparent border border-[#00d4ff] text-[#00d4ff] font-bold py-2.5 rounded text-sm hover:bg-[#00d4ff]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+          >
+            {isDemoLoading ? (
+              <>
+                <span className="animate-spin text-base">⟳</span>
+                Loading Demo...
+              </>
+            ) : (
+              <>
+                ▶ Try Live Demo
+              </>
+            )}
+          </button>
+
+          {/* Demo credentials hint */}
+          <p className="text-center text-[#4a5270] text-xs mt-3">
+            Demo access · No sign-up required
+          </p>
         </div>
 
         <p className="text-center text-[#4a5270] text-xs mt-4">

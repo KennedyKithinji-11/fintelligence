@@ -72,7 +72,7 @@ async def research_query(question: str) -> dict:
 
     llm = ChatGroq(
         groq_api_key=settings.GROQ_API_KEY,
-        model_name="llama3-70b-8192",
+        model_name="llama-3.3-70b-versatile",
         temperature=0.2,
     )
     chain = _rag_prompt | llm
